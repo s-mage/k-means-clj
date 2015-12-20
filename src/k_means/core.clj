@@ -15,21 +15,37 @@
      (c/clusterize-iteration! clustering-atom weight distances proximities)
      clustering-atom))
   ([weight old new clustering-atom]
-   (when-not (= old new)
+   (if (= old new)
+     clustering-atom
      (recur
        weight
        new
        (c/clusterize-iteration! clustering-atom weight distances proximities)
        clustering-atom))))
 
-(defn errors-count [wrong right])
 
-(defn best-clustering [initial attempts right]
+(defn uniform-weights [attempts]
+  (mapv #(/ % attempts) (range (+ attempts 1))))
+
+(defn bino-tail-weights [attempts]
+  (let [summands (reduce (fn [r x] (conj r (/ (last r) 2))) [1/2] (range (- attempts 3)))]
+    (conj (reduce (fn [r, x] (conj r (+ (last r) x))) [0] summands) 1)))
+
+(defn errors-count [wrong right]
+  (count (filter #(false? %) (mapv = wrong right))))
+
+(defn errors-by-weight
   "Find the best clustering for weight in range (0..1) with 1 / <attempts> step"
-  (let [atoms (pmap (fn [weight] [(atom initial) (/ weight attempts)]) (range attempts))
-        clusterized (pmap (fn [weight clustering] (clusterize weight clustering)) atoms)
-        best (max-key #(errors-count % right) clusterized)]
-    best))
+  [initial weights right]
+  (let [clusterized (pmap (fn [w] (clusterize w (atom initial))) weights)]
+    (map #(errors-count @% right) clusterized)))
+
+(defn best-clustering
+  "Find the best clustering for weight in range (0..1) with 1 / <attempts> step"
+  [initial weights right]
+  (apply min-key last (map-indexed (fn [k v] [v (weights k)])
+                                   (errors-by-weight initial weights right))))
+
 
 (defn -main
   "Get filename and weight, clusterize space and draw the result"
