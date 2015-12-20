@@ -3,6 +3,8 @@
 This repo contains code for two-component k-means. What is it you can read (in Russian)
 in S.D. Dvoenko's article http://jmlda.org/papers/doc/2014/no9/Dvoenko2014Bipartial.pdf
 
+*Important:* code relies on patched incanter. See https://github.com/incanter/incanter/issues/322 how and where to patch.
+
 ## Installation
 
 Clone the repo and run `lein repl`. Experimenting is about working in repl.
