@@ -31,7 +31,7 @@
       (count clustering))))
 
 (defn proximity [num1 num2 clustering data]
-  (let [div (reduce + (flatten (intercluster num1 num2 clustering data)))
+  (let [div (sum (intercluster num1 num2 clustering data))
         den (* (count (cluster-numbers num1 clustering))
                (count (cluster-numbers num2 clustering)))]
     (/ div den)))

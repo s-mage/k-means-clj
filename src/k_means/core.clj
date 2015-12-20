@@ -31,6 +31,10 @@
   (let [summands (reduce (fn [r x] (conj r (/ (last r) 2))) [1/2] (range (- attempts 3)))]
     (conj (reduce (fn [r, x] (conj r (+ (last r) x))) [0] summands) 1)))
 
+(defn bino-weights [attempts]
+  (let [summands (reduce (fn [r x] (conj r (/ (last r) 2))) [1/2] (range (- attempts 3)))]
+    (conj (vec (reverse (conj summands 0))) 1)))
+
 (defn errors-count [wrong right]
   (count (filter #(false? %) (mapv = wrong right))))
 
