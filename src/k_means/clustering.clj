@@ -1,5 +1,6 @@
 (ns k-means.clustering
   (:require [clojure.core.matrix :as m]
+            [clojure.core.matrix.operators :as mop]
             [incanter.charts :refer [scatter-plot]]
             [k-means.data-transform :as tr])
   (:use [incanter core]))
@@ -89,3 +90,7 @@
             (throw (Exception. "Size of clustering is different to count of objects"))))
       :else (throw (Exception. "Only vector templates allowed")))
         ))
+
+(defn hamming-distance [wrong right]
+  (let [br (fn [a] (for [x a y a] (if (= x y) 0 1)))]
+    (/ (m/ereduce + (m/abs (mop/- (br right) (br wrong)))) 2)))
